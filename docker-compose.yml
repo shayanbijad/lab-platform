@@ -1,0 +1,54 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: lab-platform-db
+    profiles: ["db"]
+    environment:
+      POSTGRES_USER: ${DB_USER:-postgres}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-postgres}
+      POSTGRES_DB: ${DB_NAME:-lab_platform}
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - lab-network
+
+  backend:
+    profiles: ["backend"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    command: ["node", "dist/src/main.js"]
+    container_name: lab-platform-backend
+    environment:
+      NODE_ENV: production
+      DATABASE_URL: postgresql://${DB_USER:-postgres}:${DB_PASSWORD:-postgres}@postgres:5432/${DB_NAME:-lab_platform}
+      PORT: 4000
+    ports:
+      - "4000:4000"
+    networks:
+      - lab-network
+    restart: unless-stopped
+
+  frontend:
+    profiles: ["frontend"]
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: lab-platform-frontend
+    environment:
+      NODE_ENV: production
+      NEXT_PUBLIC_API_BASE_URL: http://backend:4000
+    ports:
+      - "3000:3000"
+    networks:
+      - lab-network
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+
+networks:
+  lab-network:
+    driver: bridge

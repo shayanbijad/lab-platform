@@ -1,0 +1,28 @@
+import { getMissions } from "@/lib/api";
+
+export const dynamic = "force-dynamic";
+
+export default async function MissionsPage() {
+  const missions = await getMissions();
+
+  return (
+    <main className="p-6">
+      <h1 className="text-3xl font-bold mb-4">Sampler Missions</h1>
+      <p className="text-sm text-slate-600 mb-6">Connected to /missions from backend</p>
+      <ul className="space-y-2">
+        {Array.isArray(missions) && missions.length > 0 ? (
+          missions.map((mission) => (
+            <li key={mission.id} className="rounded border p-4">
+              <div className="font-semibold">Mission ID: {mission.id}</div>
+              <div className="text-xs text-slate-500">Status: {mission.status}</div>
+              <div className="text-sm">Order ID: {mission.orderId}</div>
+              <div className="text-sm">Address ID: {mission.addressId}</div>
+            </li>
+          ))
+        ) : (
+          <li className="text-slate-500">No missions found.</li>
+        )}
+      </ul>
+    </main>
+  );
+}

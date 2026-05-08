@@ -1,0 +1,132 @@
+{
+    "cats": [
+      { "id": 1, "title": "Cardiologist", "img": "/images/cats/01.png" },
+      { "id": 2, "title": "Dentist", "img": "/images/cats/02.png" },
+      { "id": 3, "title": "Ophthalmologists", "img": "/images/cats/08.png" },
+      { "id": 4, "title": "Otology", "img": "/images/cats/04.png" },
+      { "id": 5, "title": "Orthopedic", "img": "/images/cats/05.png" },
+      { "id": 6, "title": "General Doctor", "img": "/images/cats/06.png" },
+      { "id": 7, "title": "Radiologist", "img": "/images/cats/07.png" },
+      { "id": 8, "title": "Otology", "img": "/images/cats/08.png" },
+      { "id": 9, "title": "General Doctor", "img": "/images/cats/09.png" }
+    ],
+    "doctors": [
+      { 
+        "id": 1,
+        "name": "Dr. Jane Cooper", 
+        "Patients": "+900",
+        "Experience": 12,
+        "StartTime": "08:00",
+        "EndTime": "06:00",
+        "About": "about",
+        "Categories": "Dentist",
+        "image": "/images/doctors/01.jpg",
+        "Premium": false,
+        "Address": "547 Carrington Trace Drive, Cornelius"
+        },
+        { 
+          "id": 2,
+          "name": "Dr. Tom Cook", 
+          "Patients": "+900",
+          "Experience": 20,
+          "StartTime": "08:00",
+          "EndTime": "06:00",
+          "About": "about",
+          "Categories": "Dentist",
+          "image": "/images/doctors/02.jpg",
+          "Premium": false,
+          "Address": "547 Carrington Trace Drive, Cornelius"
+          },
+          { 
+            "id": 3,
+            "name": "Dr. Harry Potter", 
+            "Patients": "+900",
+            "Experience": 12,
+            "StartTime": "08:00",
+            "EndTime": "06:00",
+            "About": "about",
+            "Categories": "Neurologist",
+            "image": "/images/doctors/03.png",
+            "Premium": false,
+            "Address": "547 Carrington Trace Drive, Cornelius"
+            },
+            { 
+              "id": 4,
+              "name": "Dr. Swadhin Dhakne", 
+              "Patients": "+900",
+              "Experience": 11,
+              "StartTime": "08:00",
+              "EndTime": "06:00",
+              "About": "about",
+              "Categories": "General Doctor",
+              "image": "/images/doctors/04.jpg",
+              "Premium": false,
+              "Address": "Near Govt Office, Talegon Pune, India"
+              },
+              { 
+                "id": 5,
+                "name": "Dr. Emma Watson", 
+                "Patients": "+900",
+                "Experience": 9,
+                "StartTime": "08:00",
+                "EndTime": "06:00",
+                "About": "about",
+                "Categories": "Eye Specilist",
+                "image": "/images/doctors/05.jpg",
+                "Premium": false,
+                "Address": "525 N tryon Street, NC 28117"
+                },
+                { 
+                  "id": 6,
+                  "name": "Dr. Jenny Carry", 
+                  "Patients": "+900",
+                  "Experience": 9,
+                  "StartTime": "08:00",
+                  "EndTime": "06:00",
+                  "About": "about",
+                  "Categories": "Cardiologist",
+                  "image": "/images/doctors/07.jpg",
+                  "Premium": false,
+                  "Address": "525 N tryon Street, NC 28117"
+                  },
+                  { 
+                  "id": 7,
+                  "name": "Dr. Ron Wisly", 
+                  "Patients": "+900",
+                  "Experience": 9,
+                  "StartTime": "08:00",
+                  "EndTime": "06:00",
+                  "About": "about",
+                  "Categories": "Cardiologist",
+                  "image": "/images/doctors/06.jpg",
+                  "Premium": false,
+                  "Address": "525 N tryon Street, NC 28117"
+                  }
+
+    ],
+    "profile": { "name": "typicode" }
+    ,"orders": [
+    {
+      "id": 1,
+      "testName": "Blood Test",
+      "status": "Scheduled",
+      "time": "Tomorrow | 10:00 AM",
+      "action": "View Details"
+    },
+    {
+      "id": 2,
+      "testName": "PCR Test",
+      "status": "In Progress | En Route",
+      "time": "",
+      "action": "Track Order"
+    },
+    {
+      "id": 3,
+      "testName": "Cholesterol Check",
+      "status": "Completed | Results Ready",
+      "time": "",
+      "action": "View Report"
+    }
+  ]
+  }
+

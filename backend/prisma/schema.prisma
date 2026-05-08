@@ -1,0 +1,227 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id              String           @id @default(uuid())
+  phone           String           @unique
+  email           String?          @unique
+  password        String
+  role            UserRole
+  createdAt       DateTime         @default(now())
+  updatedAt       DateTime         @updatedAt
+  patient         Patient?
+  sampler         Sampler?
+  doctorProfile   DoctorProfile?
+  samplerMissions SamplerMission[]
+}
+
+model Patient {
+  id               String         @id @default(uuid())
+  userId           String         @unique
+  firstName        String?
+  lastName         String?
+  nationalId       String?        @unique
+  birthDate        DateTime?
+  age              Int?
+  gender           String?
+  insuranceId      String?
+  insuranceType    InsuranceType?
+  medicalConditions String[]      @default([])
+  profileCompleted Boolean        @default(false)
+  createdAt        DateTime       @default(now())
+  addresses        Address[]
+  orders           Order[]
+  user             User           @relation(fields: [userId], references: [id])
+}
+
+model Sampler {
+  id        String  @id @default(uuid())
+  userId    String  @unique
+  building  String?
+  city      String?
+  latitude  Float?
+  longitude Float?
+  street    String?
+  user      User    @relation(fields: [userId], references: [id])
+}
+
+model Lab {
+  id        String   @id @default(uuid())
+  name      String
+  address   String
+  phone     String
+  createdAt DateTime @default(now())
+  orders    Order[]
+}
+
+model Address {
+  id        String           @id @default(uuid())
+  patientId String
+  city      String
+  street    String
+  building  String?
+  createdAt DateTime         @default(now())
+  label     String?
+  latitude  Float?
+  longitude Float?
+  unit      String?
+  patient   Patient          @relation(fields: [patientId], references: [id])
+  orders    Order[]
+  missions  SamplerMission[]
+}
+
+model LabTest {
+  id               String      @id @default(uuid())
+  name             String
+  code             String      @unique
+  description      String?
+  price            Float
+  category         String?
+  preparationBlogId String?
+  preparationBlog  Blog?       @relation(fields: [preparationBlogId], references: [id])
+  createdAt        DateTime    @default(now())
+  orderTests       OrderTest[]
+}
+
+model Order {
+  id          String           @id @default(uuid())
+  patientId   String
+  labId       String?
+  createdAt   DateTime         @default(now())
+  addressId   String?
+  prescriptionFileUrl String?
+  prescriptionFileName String?
+  prescriptionCode String?
+  completedAt DateTime?
+  scheduledAt DateTime?
+  status      OrderStatus      @default(CREATED)
+  address     Address?         @relation(fields: [addressId], references: [id])
+  lab         Lab?             @relation(fields: [labId], references: [id])
+  patient     Patient          @relation(fields: [patientId], references: [id])
+  orderTests  OrderTest[]
+  missions    SamplerMission[]
+
+  @@index([patientId])
+}
+
+model OrderTest {
+  id      String     @id @default(uuid())
+  orderId String
+  testId  String
+  status  TestStatus @default(PENDING)
+  order   Order      @relation(fields: [orderId], references: [id])
+  labTest LabTest    @relation(fields: [testId], references: [id])
+  result  Result?
+
+  @@index([orderId])
+}
+
+model Result {
+  id          String    @id @default(cuid())
+  orderTestId String    @unique
+  value       String
+  unit        String?
+  reference   String?
+  remarks     String?
+  reviewed    Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  orderTest   OrderTest @relation(fields: [orderTestId], references: [id])
+}
+
+model SamplerMission {
+  id          String        @id @default(uuid())
+  orderId     String
+  samplerId   String?
+  status      MissionStatus @default(PENDING)
+  scheduledAt DateTime
+  createdAt   DateTime      @default(now())
+  addressId   String
+  collectedAt DateTime?
+  address     Address       @relation(fields: [addressId], references: [id])
+  order       Order         @relation(fields: [orderId], references: [id])
+  sampler     User?         @relation(fields: [samplerId], references: [id])
+
+  @@index([samplerId])
+}
+
+model Doctor {
+  id         Int    @id @default(autoincrement())
+  name       String
+  Categories String
+  Experience Int
+  Address    String
+  image      String
+}
+
+// --- NEW: DoctorProfile linked to User (for doctor login/dashboard) ---
+model DoctorProfile {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  fullName     String
+  specialty    String?
+  licenseNumber String?
+  phone        String?
+  createdAt    DateTime @default(now())
+  user         User     @relation(fields: [userId], references: [id])
+}
+
+model Blog {
+  id            String     @id @default(uuid())
+  title         String
+  slug          String     @unique
+  excerpt       String?
+  content       String
+  coverImageUrl String?
+  status        BlogStatus @default(DRAFT)
+  createdAt     DateTime   @default(now())
+  updatedAt     DateTime   @updatedAt
+  labTests      LabTest[]
+}
+
+enum UserRole {
+  PATIENT
+  SAMPLER
+  LAB_ADMIN
+  SUPER_ADMIN
+  DOCTOR
+}
+
+enum MissionStatus {
+  PENDING
+  ASSIGNED
+  COLLECTED
+  CANCELLED
+}
+
+enum OrderStatus {
+  CREATED
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+enum TestStatus {
+  PENDING
+  COLLECTED
+  PROCESSING
+  COMPLETED
+}
+
+enum BlogStatus {
+  DRAFT
+  PUBLISHED
+}
+
+enum InsuranceType {
+  SOCIAL_SECURITY
+  SELF_PAY
+  ARMED_FORCES
+  HEALTH_INSURANCE
+}

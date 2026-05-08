@@ -1,0 +1,21 @@
+-- AlterEnum
+ALTER TYPE "UserRole" ADD VALUE 'DOCTOR';
+
+-- CreateTable
+CREATE TABLE "DoctorProfile" (
+    "id" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "fullName" TEXT NOT NULL,
+    "specialty" TEXT,
+    "licenseNumber" TEXT,
+    "phone" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "DoctorProfile_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "DoctorProfile_userId_key" ON "DoctorProfile"("userId");
+
+-- AddForeignKey
+ALTER TABLE "DoctorProfile" ADD CONSTRAINT "DoctorProfile_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

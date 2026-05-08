@@ -1,0 +1,15 @@
+cd backend
+shayan@Shayans-MacBook-Air backend %  mkdir -p ~/minio-data                                                                                       
+  MINIO_ROOT_USER=madmin \
+  MINIO_ROOT_PASSWORD=xjwnd2@#mSS \
+  minio server ~/minio-data --address ":9000" --console-address ":9001"
+
+
+
+  cd backend
+  npm run start:dev
+  
+
+
+  cd frontend
+  npm run dev

@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Sampler" ADD COLUMN     "building" TEXT,
+ADD COLUMN     "city" TEXT,
+ADD COLUMN     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+ADD COLUMN     "latitude" DOUBLE PRECISION,
+ADD COLUMN     "longitude" DOUBLE PRECISION,
+ADD COLUMN     "street" TEXT;
