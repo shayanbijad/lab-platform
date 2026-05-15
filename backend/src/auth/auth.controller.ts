@@ -18,84 +18,81 @@ interface LoginDto {
 export class AuthController {
   constructor(private auth: AuthService) {}
 
-  // Generic auth endpoints (backward compatibility)
+  // Generic auth endpoints (optional / backward compatibility)
   @Post('register')
   register(@Body() dto: RegisterDto) {
     return this.auth.register({
       email: dto.email,
       password: dto.password,
       phone: dto.phone,
-      role: dto.role || 'PATIENT',
+      role: dto.role || UserRole.PATIENT,
     });
   }
 
   @Post('login')
   login(@Body() dto: LoginDto) {
-    return this.auth.login(dto);
+    return this.auth.login({
+      ...dto,
+      role: UserRole.PATIENT,
+    });
   }
 
-  // Patient auth endpoints
+  // PATIENT
   @Post('patient/register')
   registerPatient(@Body() dto: Omit<RegisterDto, 'role'>) {
     return this.auth.register({
       email: dto.email,
       password: dto.password,
       phone: dto.phone,
-      role: 'PATIENT',
+      role: UserRole.PATIENT,
     });
   }
 
   @Post('patient/login')
   loginPatient(@Body() dto: LoginDto) {
-    return this.auth.login(dto);
+    return this.auth.login({
+      ...dto,
+      role: UserRole.PATIENT,
+    });
   }
 
-  // Sampler auth endpoints
+  // SAMPLER
   @Post('sampler/register')
   registerSampler(@Body() dto: Omit<RegisterDto, 'role'>) {
     return this.auth.register({
       email: dto.email,
       password: dto.password,
       phone: dto.phone,
-      role: 'SAMPLER',
+      role: UserRole.SAMPLER,
     });
   }
 
   @Post('sampler/login')
   loginSampler(@Body() dto: LoginDto) {
-    return this.auth.login(dto);
+    console.log('SAMPLER LOGIN ROUTE HIT');
+    return this.auth.login({
+      ...dto,
+      role: UserRole.SAMPLER,
+    });
   }
 
-  // Admin auth endpoints (LAB_ADMIN)
+
+  // ADMIN
   @Post('admin/register')
   registerAdmin(@Body() dto: Omit<RegisterDto, 'role'>) {
     return this.auth.register({
       email: dto.email,
       password: dto.password,
       phone: dto.phone,
-      role: 'LAB_ADMIN',
+      role: UserRole.LAB_ADMIN,
     });
   }
 
   @Post('admin/login')
   loginAdmin(@Body() dto: LoginDto) {
-    return this.auth.login(dto);
-  }
-
-  // Doctor auth endpoints
-  @Post('doctor/register')
-  registerDoctor(@Body() dto: Omit<RegisterDto, 'role'>) {
-    return this.auth.register({
-      email: dto.email,
-      password: dto.password,
-      phone: dto.phone,
-      role: 'DOCTOR',
+    return this.auth.login({
+      ...dto,
+      role: UserRole.LAB_ADMIN,
     });
   }
-
-  @Post('doctor/login')
-  loginDoctor(@Body() dto: LoginDto) {
-    return this.auth.login(dto);
-  }
 }
-
