@@ -11,22 +11,31 @@ export default function SamplerLogin() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const role = 'sampler';
+  const role = 'SAMPLER';
+  
+const submit = async (e) => {
+  e.preventDefault();
 
-  const submit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setError('');
+  setLoading(true);
+  setError("");
 
-    const res = await login(email, password, role);
+  const res = await login(email, password, "sampler");
 
-    if (res.success) {
-      router.push('/missions');
-    } else {
-      setError(res.error || 'ورود ناموفق بود');
-      setLoading(false);
-    }
-  };
+  if (!res.success) {
+    setError(res.error || "ورود ناموفق بود");
+    setLoading(false);
+    return;
+  }
+
+  if (res.role !== "SAMPLER") {
+    setError("این حساب نمونه‌گیر نیست");
+    setLoading(false);
+    return;
+  }
+
+  router.push("/missions");
+};
+
 
   return (
     <div dir="rtl" className="min-h-screen flex items-center justify-center">
@@ -51,7 +60,7 @@ export default function SamplerLogin() {
           onChange={(e)=>setPassword(e.target.value)}
         />
 
-        <button className="bg-emerald-600 text-white py-2 rounded w-full">
+        <button className="bg-blue-600 text-white py-2 rounded w-full">
           ورود
         </button>
       </form>
