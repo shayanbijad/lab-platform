@@ -8,7 +8,6 @@ import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import { Prisma, UserRole } from '@prisma/client';
-import { PrismaService } from '../prisma/prisma.service';
 
 interface RegisterDto {
   email: string;
@@ -21,6 +20,7 @@ interface LoginDto {
   email?: string;
   phone?: string;
   password: string;
+  role: UserRole;
 }
 
 @Injectable()
@@ -28,9 +28,9 @@ export class AuthService {
   constructor(
     private readonly users: UsersService,
     private readonly jwt: JwtService,
-    private readonly prisma: PrismaService,
   ) {}
 
+  // REGISTER
   async register(dto: RegisterDto) {
     const existing = await this.users.findByEmail(dto.email);
 
@@ -44,11 +44,9 @@ export class AuthService {
       const user = await this.users.create({
         email: dto.email,
         password: hashed,
-        role: dto.role ?? UserRole.PATIENT,
+        role: dto.role,
         phone: dto.phone,
       });
-
-      await this.ensureRoleProfile(user.id, user.role);
 
       const payload = {
         sub: user.id,
@@ -62,7 +60,7 @@ export class AuthService {
       });
 
       return {
-        token: token,
+        token,
         user: {
           id: user.id,
           email: user.email,
@@ -82,8 +80,10 @@ export class AuthService {
     }
   }
 
+  // LOGIN
   async login(dto: LoginDto) {
     let user;
+
     if (dto.email) {
       user = await this.users.findByEmail(dto.email);
     } else if (dto.phone) {
@@ -100,7 +100,9 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    await this.ensureRoleProfile(user.id, user.role);
+    if (user.role !== dto.role) {
+      throw new UnauthorizedException('Invalid role for this login portal');
+    }
 
     const payload = {
       sub: user.id,
@@ -114,7 +116,7 @@ export class AuthService {
     });
 
     return {
-      token: token,
+      token,
       user: {
         id: user.id,
         email: user.email,
@@ -123,42 +125,4 @@ export class AuthService {
       },
     };
   }
-
-  private async ensureRoleProfile(userId: string, role: UserRole) {
-    if (role === UserRole.PATIENT) {
-      const patient = await this.prisma.patient.findUnique({ where: { userId } });
-      if (!patient) {
-        await this.prisma.patient.create({
-          data: {
-            userId,
-          },
-        });
-      }
-      return;
-    }
-
-    if (role === UserRole.SAMPLER) {
-      const sampler = await this.prisma.sampler.findUnique({ where: { userId } });
-      if (!sampler) {
-        await this.prisma.sampler.create({
-          data: {
-            userId,
-          },
-        });
-      }
-    }
-
-    if (role === UserRole.DOCTOR) {
-      const profile = await this.prisma.doctorProfile.findUnique({ where: { userId } });
-      if (!profile) {
-        await this.prisma.doctorProfile.create({
-          data: {
-            userId,
-            fullName: 'Doctor',
-          },
-        });
-      }
-    }
-  }
 }
-
